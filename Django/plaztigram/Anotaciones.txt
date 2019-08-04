@@ -1,0 +1,171 @@
+
+
+CREACION DE LA APLICACION posts
+
+COMANDOS:
+python3 manage.py startapp posts. //procuramos que el nombre siempre sea en plural ‘’posts”
+
+Y colocamos el nombre de la app en este caso ‘posts’ en seeting.py de plaztigram o la carpeta padre en el apartado INSTALL_APPS 
+, ‘posts’ ,
+
+
+"""Platzigram views."""
+
+
+
+# Django
+from django.http import HttpResponse
+
+# Utilities
+from datetime import datetime
+import json
+
+
+def hello_world(request):
+    """Return a greeting."""
+    return HttpResponse('Oh, hi! Current server time is {now}'.format(
+        now=datetime.now().strftime('%b %dth, %Y - %H:%M hrs')
+    ))
+
+
+def sort_integers(request):
+    """Return a JSON response with sorted integers."""
+    numbers = [int(i) for i in request.GET['numbers'].split(',')]
+    sorted_ints = sorted(numbers)
+    data = {
+        'status': 'ok',
+        'numbers': sorted_ints,
+        'message': 'Integers sorted successfully.'
+    }
+    return HttpResponse(json.dumps(data, indent=4),content_type='application/json')
+
+
+def say_hi(request, name, age):
+    """Return a greeting."""
+    if age < 12:
+        message = 'Sorry {}, you are not allowed here'.format(name)
+    else:
+        message = 'Hello, {}! Welcome to Platzigram'.format(name)
+    return HttpResponse(message)
+
+
+--------------------------------------------------------------------------------------------------------------------->
+
+
+
+Patrón de Diseño: Es una solución reutilizable a un problema común. En el Desarrollo Web existe el Model View Controler (MVC) .Esto resuelve tres frentes: datos, lógica y presentación. El controler maneja la lógica del request y sabe que template tiene que mostrar, y cambia los datos a través del modelo. El modelo define la estructura de datos y se encarga del acceso e incluso la validación.
+
+En Django existe el MODEL TEMPLATE VIEW se divide: Model, Template ( es la lógica de presentación de los datos), View( trae los datos y los pasa al template).
+
+NOTA: Se puede decir que Django es un framework cercano al MVC.
+DJANGO
+MTV => MVC:
+* Views + Urls => Controller
+* Templates => View
+* Models => Model
+
+
+
+--------------------------------------------------------------------------------------------------------------------->
+
+
+ORM DE DJANGO
+
+El Model en el MODEL TEMPLATE VIEW
+Veremos las diferentes opciones para conectar a una base de datos con Django.
+OBJETC RELATIONAL MAPPER (ORM) : Es una técnica para trabajar con datos a través 	múltiples sistemas usando una abstracción de programación orientada a objetos. Es un conjunto de clases que permite interactuar con la base datos y definir la estructura de la tabla.
+
+COMANDOS:
+
+python3 manage.py makemigrations : Buscar los cambios en el modelo y lo va reflejar en un archivo.
+python3 manage.py migrate : Va aplicar los cambios en nuestra base de datos.
+
+
+--------------------------------------------------------------------------------------------------------------------->
+
+
+
+Cómo crear instancias o mejor dicho como crear registros, cómo hacer consultas y cómo hacer filtros  y cómo se reflejan en el admin de Django.
+
+from posts.models import User
+fabrizio = User.objects.create(
+... email='fabrizio.vasquez@utec.edu.pe',
+... password='Google0307...',
+... first_name='Fabrizio',
+... last_name='Vásquez'
+... )
+>>> fabrizio.email
+'fabrizio.vasquez@utec.edu.pe'
+Guardamos cambios en la base de datos con el comando 2.
+Eliminamos en la base de datos con el comando 3.
+
+
+COMANDOS:
+
+1.-python3 manage.py shell : Tener una consola con python3 y ademas Django.
+2.-fabrizio.save()
+3.-fabrizio.delete()
+4.-user = User.objects.get(email='avilia.consuelo@utec.edu.pe')
+// Con esto se puede acceder a todo el contenido del objeto Avilia.
+5.-user_family = User.objects.filter(email__endswith ='@utec.edu.pe')
+// Query : Para llamar a todos aquellos email que tiene dicha terminación
+
+6.-  .objects.all()
+// Esto se usa para modificar y actualizar datos de todos los usuarios con email ‘ @gmail.com’ es por ello que utilizamos la nuncio filter.
+7.- users = User.objects.filter(email__endswith =‘@gmail.com’).update(country = ‘Huancayo’)
+
+
+
+
+
+from datetime import date
+personas = [	
+	{
+	'email' :'avilia.consuelo@utec.edu.pe',
+	'password':'Avilia1402',
+	'first_name':'Avilia',
+	'last_name':'Auqui',
+	'bio':'Avilia Consuelo Auqui Maraví es una ama de casa de la Familia Vásquez Auqui, actualmente tiene 49 años de edad, es originaria de Concepción y actualmente vive en Lima-Perú.',
+	'birthday':date(1969,2,14),
+	'country':'Huancayo',
+	'is_admin':True
+	},
+	{
+	'email' :'luis.vasquez@gmail.com',
+	'password':'Luis0210',
+	'first_name':'Fabrizio',
+	'last_name':'Vásquez',	
+	'bio':'Luis Vásquez señor de 50 años de edad , actualmente vive en Lima La Victoria.',
+	'birthday':date(1967,10,2),
+	'country':'Huancayo',
+	'is_admin':True
+	}
+	]	
+
+//ESTO ES PARA GUARDAR CADA UNO DE LO QUE SE ACABA DE ESCRIBIR EN LA BASE DE DATOS
+from posts.models import User
+
+for data in personas:
+	obj = User(**data)
+	obj.save()
+	print(obj.first_name,':',obj.email,':',obj.country,":",obj.birthday)
+
+
+
+//PARA MOSTRAR EL CONTENIDO DEL LOS DATOS EN LA BASE DE DATOS EN PANTALLA , LO HACEMOS MEDIANTE UN BUCLE FOR
+
+from posts.models import User
+
+//Recopilamos todos los usuarios o mejor dicho toda la data mediante 6
+todos_usuarios = User.objects.all()
+
+for u in todos_usuarios:
+	//Con esto mostramos la data que queremos de los usuarios en la base de datos
+		print(u.first_name,':',u.email,':',u.birthday,':',u.country,':',u.password)
+
+Users = User.objects.filter(email__endswith=‘@gmail.com’).update(is_admin=True)
+Esto se usa para modificar y actualizar datos de todos los usuarios con email ‘ @gmail.com’ es por ello que utilizamos la nuncio filter. Y luego hacemos un for como el anterior para visualizar la data.
+
+--------------------------------------------------------------------------------------------------------------------->
+
+
